@@ -461,15 +461,14 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
       return;
     }
 
-    console.log('Listing streams...');
     setTimeout(() => {
-      //updateLoadingStreams(true);
+      updateLoadingStreams(true);
     });
 
-    console.log("here...")
+    console.log("map...")
     msp.listStreams({treasurer: publicKey, beneficiary: publicKey})
       .then(streams => {
-        
+        console.log("in map!")
         const rawStreams = streams;
         console.log("rawStreams", rawStreams);
         const sortedStreams = rawStreams.sort((a, b) => (a.createdBlockTime < b.createdBlockTime) ? 1 : -1);
