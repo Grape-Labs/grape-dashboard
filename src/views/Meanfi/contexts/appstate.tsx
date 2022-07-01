@@ -466,7 +466,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
     });
 
     console.log("map...")
-    msp.listStreams({treasurer: publicKey, beneficiary: publicKey})
+    msp?.listStreams({treasurer: publicKey, beneficiary: publicKey})
       .then(streams => {
         console.log("in map!")
         const rawStreams = streams;
