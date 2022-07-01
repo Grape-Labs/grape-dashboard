@@ -466,6 +466,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
       updateLoadingStreams(true);
     });
 
+    console.log("here...")
     msp.listStreams({treasurer: publicKey, beneficiary: publicKey})
       .then(streams => {
         

@@ -41,6 +41,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
+import { getOrCreateAssociatedTokenAccount } from '@solana/spl-token';
 
 function trimAddress(addr: string) {
     if (!addr) return addr;
@@ -176,7 +177,14 @@ export default function SendToken(props: any) {
                     <CircularProgress sx={{padding:'10px'}} />
                 );
                 const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                await connection.confirmTransaction(signature, 'processed');
+                //await connection.confirmTransaction(signature, 'processed');
+                const latestBlockHash = await connection.getLatestBlockhash();
+                await connection.confirmTransaction({
+                    blockhash: latestBlockHash.blockhash,
+                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                    signature: signature}, 
+                    'processed'
+                );
                 closeSnackbar(cnfrmkey);
                 const action = (key:any) => (
                         <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank'  sx={{color:'white'}}>
@@ -191,20 +199,19 @@ export default function SendToken(props: any) {
             const accountInfo = await connection.getParsedAccountInfo(tokenAccount);
             const accountParsed = JSON.parse(JSON.stringify(accountInfo.value.data));
             const decimals = accountParsed.parsed.info.decimals;
-
+            
             let fromAta = await getAssociatedTokenAddress( // calculate from ATA
                 mintPubkey, // mint
                 fromWallet, // from owner
-                false,
+                true,
                 TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
                 ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
             
-            
             let toAta = await getAssociatedTokenAddress( // calculate to ATA
                 mintPubkey, // mint
                 toWallet, // to owner
-                false,
+                true,
                 TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
                 ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
@@ -216,7 +223,9 @@ export default function SendToken(props: any) {
                 "fromAta: "+fromAta+
                 " toAta: "+toAta
             )
-
+            
+            console.log("receiverAccount ("+toWallet+"): ATA"+toAta+"- -"+JSON.stringify(receiverAccount));
+            
             if (receiverAccount === null) { // initialize token
                 const transaction = new Transaction()
                 .add(
@@ -253,7 +262,14 @@ export default function SendToken(props: any) {
                         <CircularProgress sx={{padding:'10px'}} />
                     );
                     const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                    await connection.confirmTransaction(signature, 'processed');
+                    //await connection.confirmTransaction(signature, 'processed');
+                    const latestBlockHash = await connection.getLatestBlockhash();
+                    await connection.confirmTransaction({
+                        blockhash: latestBlockHash.blockhash,
+                        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                        signature: signature}, 
+                        'processed'
+                    );
                     closeSnackbar(cnfrmkey);
                     const action = (key:any) => (
                         <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
@@ -292,7 +308,14 @@ export default function SendToken(props: any) {
                         <CircularProgress sx={{padding:'10px'}} />
                     );
                     const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                    await connection.confirmTransaction(signature, 'processed');
+                    //await connection.confirmTransaction(signature, 'processed');
+                    const latestBlockHash = await connection.getLatestBlockhash();
+                    await connection.confirmTransaction({
+                        blockhash: latestBlockHash.blockhash,
+                        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                        signature: signature}, 
+                        'processed'
+                    );
                     closeSnackbar(cnfrmkey);
                     const action = (key:any) => (
                         <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >

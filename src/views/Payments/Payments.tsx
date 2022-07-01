@@ -78,10 +78,16 @@ export function PaymentsView(props: any) {
                 <CircularProgress sx={{padding:'10px'}} />
             );
             const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-            await connection.confirmTransaction(signature, 'processed');
+            const latestBlockHash = await connection.getLatestBlockhash();
+            await connection.confirmTransaction({
+                blockhash: latestBlockHash.blockhash,
+                lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                signature: signature}, 
+                'processed'
+            );
+        
             closeSnackbar(cnfrmkey);
             
-            await connection.confirmTransaction(signature, 'processed');
             enqueueSnackbar(`Sent payments - ${signature}`,{ variant: 'success' });
             
             setTransactionSignature(signature);
@@ -125,6 +131,7 @@ export function PaymentsView(props: any) {
                 ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
             
+            
             let toAta = await getAssociatedTokenAddress( // calculate to ATA
                 mintPubkey, // mint
                 toWallet, // to owner
@@ -137,6 +144,7 @@ export function PaymentsView(props: any) {
             const receiverAccount = await connection.getAccountInfo(toAta);
             
             if (receiverAccount === null) { // initialize token
+                
                 const transaction = new Transaction()
                 .add(
                     createAssociatedTokenAccountInstruction(

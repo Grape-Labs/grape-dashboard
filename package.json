@@ -1,6 +1,6 @@
 {
   "name": "grape-dashboard",
-  "version": "1.2.222",
+  "version": "1.2.224",
   "author": "Grape devDAO",
   "private": true,
   "repository": "https://github.com/grape-labs/grape-dashboard",
@@ -127,10 +127,10 @@
     "zustand": "^3.6.8"
   },
   "devDependencies": {
-    "@parcel/packager-raw-url": "2.6.1",
+    "@parcel/packager-raw-url": "^2.6.1",
     "@parcel/resolver-glob": "^2.5.0",
-    "@parcel/transformer-less": "2.6.1",
-    "@parcel/transformer-webmanifest": "2.6.1",
+    "@parcel/transformer-less": "^2.6.1",
+    "@parcel/transformer-webmanifest": "^2.6.1",
     "@types/bn.js": "^5.1.0",
     "@types/bs58": "^4.0.1",
     "@types/eslint": "^8.2.2",
