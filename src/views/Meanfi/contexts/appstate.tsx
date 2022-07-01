@@ -463,11 +463,10 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
 
     console.log('Listing streams...');
     setTimeout(() => {
-      updateLoadingStreams(true);
+      //updateLoadingStreams(true);
     });
 
     console.log("here...")
-    console.log(JSON.stringify(msp));
     msp.listStreams({treasurer: publicKey, beneficiary: publicKey})
       .then(streams => {
         
