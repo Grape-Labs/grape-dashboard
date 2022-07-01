@@ -467,6 +467,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
     });
 
     console.log("here...")
+    console.log(JSON.stringify(msp));
     msp.listStreams({treasurer: publicKey, beneficiary: publicKey})
       .then(streams => {
         
@@ -475,6 +476,7 @@ const AppStateProvider: React.FC<AppStateProviderProps> = (props) => {
         const sortedStreams = rawStreams.sort((a, b) => (a.createdBlockTime < b.createdBlockTime) ? 1 : -1);
         console.log('Sorted Streams:', sortedStreams);
         
+        console.log("here... 2")
         // Sort debugging block
         const debugTable: any[] = [];
         rawStreams.forEach(item => debugTable.push({
