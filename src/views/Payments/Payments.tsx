@@ -134,7 +134,6 @@ export function PaymentsView(props: any) {
             );
             
             //console.log("validateAddress onCurve: "+ValidateAddress(toWallet.toBase58()))
-
             //console.log("Checking from: "+fromWallet.toBase58()+ " "+fromTokenAccount?.address?.toBase58());
             try{
                 let toTokenAccount = await getOrCreateAssociatedTokenAccount(
@@ -274,9 +273,11 @@ export function PaymentsView(props: any) {
 
                 if (ValidateAddress(value.address)){
                     let singletx = await transferTokenInstruction(tokentouse, value.address, +value.amount);
-                    sum+=+value.amount;
-                    //console.log('Transaction: '+JSON.stringify(singletx));
-                    batchtx.add(singletx);
+                    if (singletx){
+                        sum+=+value.amount;
+                        //console.log('Transaction: '+JSON.stringify(singletx));
+                        batchtx.add(singletx);
+                    }
                 } else{
                     console.log("Skipping "+value.address);
                 }
