@@ -253,6 +253,7 @@ export function PaymentsView(props: any) {
     let data_json = JSON.parse(JSON.stringify(data));
     let sum = 0;
     let skip = 0;
+    let skip_address = '';
     if (data.length <= 20){
         let batchtx = new Transaction();
 
@@ -280,6 +281,7 @@ export function PaymentsView(props: any) {
                         batchtx.add(singletx);
                     } else{
                         skip++;
+                        skip_address = '\n'+value.address;
                     }
                 } else{
                     console.log("Skipping "+value.address);
@@ -288,7 +290,11 @@ export function PaymentsView(props: any) {
         }
         // Grape Check
         batchtx.add(grapecheck);
-        let r = window.confirm("Total amount to send: "+sum+"\nSkipping "+skip+" address\n+1 Grape will be sent to Grape Treasury\n\nPress OK to Pay All "+data.length+" or Cancel.");
+        let skip_text = '';
+        if (skip>0){
+            skip_text = '\n\nSkipping '+skip+' address(es): '+skip_address+'\n\n';
+        }
+        let r = window.confirm("Total amount to send: "+sum+""+skip_text+"\n+1 Grape will be sent to Grape Treasury\n\nPress OK to Pay All "+data.length+" or Cancel.");
         if (r)
             executeTransactions(batchtx, memoText);
     } else{
