@@ -200,6 +200,27 @@ export default function SendToken(props: any) {
             const accountParsed = JSON.parse(JSON.stringify(accountInfo.value.data));
             const decimals = accountParsed.parsed.info.decimals;
             
+            let fromTokenAccount = await getOrCreateAssociatedTokenAccount(
+                connection,
+                fromWallet,
+                mintPubkey,
+                fromWallet,
+                true,
+                TOKEN_PROGRAM_ID,
+                ASSOCIATED_TOKEN_PROGRAM_ID
+            );
+
+            let toTokenAccount = await getOrCreateAssociatedTokenAccount(
+                connection,
+                fromWallet,
+                mintPubkey,
+                toWallet,
+                true,
+                TOKEN_PROGRAM_ID,
+                ASSOCIATED_TOKEN_PROGRAM_ID
+            );
+            
+            /*
             let fromAta = await getAssociatedTokenAddress( // calculate from ATA
                 mintPubkey, // mint
                 fromWallet, // from owner
@@ -215,119 +236,63 @@ export default function SendToken(props: any) {
                 TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
                 ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
             );
-            
+            */
             const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
-            const receiverAccount = await connection.getAccountInfo(toAta);
-            
+            //const receiverAccount = await connection.getAccountInfo(toAta);
+            /*
             console.log(
                 "fromAta: "+fromAta+
                 " toAta: "+toAta
             )
-            
             console.log("receiverAccount ("+toWallet+"): ATA"+toAta+"- -"+JSON.stringify(receiverAccount));
+            */
+           
+            const transaction = new Transaction()
+            .add(
+                createTransferInstruction(
+                    fromTokenAccount.address,
+                    toTokenAccount.address,
+                    publicKey,
+                    adjustedAmountToSend,
+                    [],
+                    TOKEN_PROGRAM_ID,
+                )
+            )
+            .add(
+                new TransactionInstruction({
+                    keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
+                    data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
+                    programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
+                })
+            );
             
-            if (receiverAccount === null) { // initialize token
-                const transaction = new Transaction()
-                .add(
-                    createAssociatedTokenAccountInstruction(
-                        toWallet, // owner of token account
-                        toAta, // ata
-                        fromWallet, // fee payer
-                        mintPubkey, // mint
-                        TOKEN_PROGRAM_ID, // always TOKEN_PROGRAM_ID
-                        ASSOCIATED_TOKEN_PROGRAM_ID, // always ASSOCIATED_TOKEN_PROGRAM_ID
-                    )
-                )
-                .add(
-                    createTransferInstruction(
-                        fromAta,
-                        toAta,
-                        publicKey,
-                        adjustedAmountToSend,
-                        [],
-                        TOKEN_PROGRAM_ID,
-                    )
-                ).add(
-                    new TransactionInstruction({
-                        keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
-                        data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
-                        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
-                    })
+            try{
+                enqueueSnackbar(`Preparing to send ${amountToSend} ${name} to ${toaddress}`,{ variant: 'info' });
+                const signature = await sendTransaction(transaction, freeconnection);
+                const snackprogress = (key:any) => (
+                    <CircularProgress sx={{padding:'10px'}} />
                 );
-                
-                try{
-                    enqueueSnackbar(`Preparing to send ${amountToSend} ${name} to ${toaddress}`,{ variant: 'info' });
-                    const signature = await sendTransaction(transaction, freeconnection);
-                    const snackprogress = (key:any) => (
-                        <CircularProgress sx={{padding:'10px'}} />
-                    );
-                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                    //await connection.confirmTransaction(signature, 'processed');
-                    const latestBlockHash = await connection.getLatestBlockhash();
-                    await connection.confirmTransaction({
-                        blockhash: latestBlockHash.blockhash,
-                        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                        signature: signature}, 
-                        'processed'
-                    );
-                    closeSnackbar(cnfrmkey);
-                    const action = (key:any) => (
-                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
-                            Signature: {signature}
-                        </Button>
-                    );
-                    enqueueSnackbar(`Sent ${amountToSend} ${name} to ${toaddress}`,{ variant: 'success', action });
-                }catch(e){
-                    closeSnackbar();
-                    enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
-                } 
-            } else{ // token already in wallet
-                const transaction = new Transaction()
-                .add(
-                    createTransferInstruction(
-                        fromAta,
-                        toAta,
-                        publicKey,
-                        adjustedAmountToSend,
-                        [],
-                        TOKEN_PROGRAM_ID,
-                    )
-                )
-                .add(
-                    new TransactionInstruction({
-                        keys: [{ pubkey: fromWallet, isSigner: true, isWritable: true }],
-                        data: Buffer.from(JSON.stringify(GRAPE_TT_MEMO), 'utf-8'),
-                        programId: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"),
-                    })
+                const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+                //await connection.confirmTransaction(signature, 'processed');
+                const latestBlockHash = await connection.getLatestBlockhash();
+                await connection.confirmTransaction({
+                    blockhash: latestBlockHash.blockhash,
+                    lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+                    signature: signature}, 
+                    'processed'
                 );
-                
-                try{
-                    enqueueSnackbar(`Preparing to send ${amountToSend} ${name} to ${toaddress}`,{ variant: 'info' });
-                    const signature = await sendTransaction(transaction, freeconnection);
-                    const snackprogress = (key:any) => (
-                        <CircularProgress sx={{padding:'10px'}} />
-                    );
-                    const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
-                    //await connection.confirmTransaction(signature, 'processed');
-                    const latestBlockHash = await connection.getLatestBlockhash();
-                    await connection.confirmTransaction({
-                        blockhash: latestBlockHash.blockhash,
-                        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-                        signature: signature}, 
-                        'processed'
-                    );
-                    closeSnackbar(cnfrmkey);
-                    const action = (key:any) => (
-                        <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
-                            Signature: {signature}
-                        </Button>
-                    );
-                    enqueueSnackbar(`Sent ${amountToSend} ${name} to ${toaddress}`,{ variant: 'success', action });
-                }catch(e){
-                    closeSnackbar();
-                    enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
-                } 
-            }
+                closeSnackbar(cnfrmkey);
+                const action = (key:any) => (
+                    <Button href={`https://explorer.solana.com/tx/${signature}`} target='_blank' sx={{color:'white'}} >
+                        Signature: {signature}
+                    </Button>
+                );
+                enqueueSnackbar(`Sent ${amountToSend} ${name} to ${toaddress}`,{ variant: 'success', action });
+            }catch(e){
+                closeSnackbar();
+                enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+            } 
+            
         }
     }
     
