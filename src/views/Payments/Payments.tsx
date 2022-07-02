@@ -168,7 +168,7 @@ export function PaymentsView(props: any) {
                 
                 return transaction;
             }catch(e){
-                return new Transaction();
+                return null;
             }
         }
     }
