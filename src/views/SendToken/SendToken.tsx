@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, Signer } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, createTransferInstruction } from "@solana/spl-token";
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createAssociatedTokenAccountInstruction, createTransferInstruction } from "@solana/spl-token";
 
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from '../../components/Tools/constants';
 import { GRAPE_TREASURY } from '../../components/Tools/constants';
@@ -41,7 +41,6 @@ import HelpIcon from '@mui/icons-material/Help';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
-import { getOrCreateAssociatedTokenAccount } from '@solana/spl-token';
 
 function trimAddress(addr: string) {
     if (!addr) return addr;
@@ -206,6 +205,8 @@ export default function SendToken(props: any) {
                 mintPubkey,
                 fromWallet,
                 true,
+                null,
+                null,
                 TOKEN_PROGRAM_ID,
                 ASSOCIATED_TOKEN_PROGRAM_ID
             );
@@ -216,6 +217,8 @@ export default function SendToken(props: any) {
                 mintPubkey,
                 toWallet,
                 true,
+                null,
+                null,
                 TOKEN_PROGRAM_ID,
                 ASSOCIATED_TOKEN_PROGRAM_ID
             );
@@ -246,7 +249,7 @@ export default function SendToken(props: any) {
             )
             console.log("receiverAccount ("+toWallet+"): ATA"+toAta+"- -"+JSON.stringify(receiverAccount));
             */
-           
+
             const transaction = new Transaction()
             .add(
                 createTransferInstruction(
