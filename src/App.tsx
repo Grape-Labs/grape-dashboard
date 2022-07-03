@@ -30,8 +30,8 @@ import Header from './components/Header/Header';
 import { SnackbarProvider } from 'notistack';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { WalletIdentityProvider } from '@cardinal/namespaces-components'
-import './cardinal.css';
+//import { WalletIdentityProvider } from '@cardinal/namespaces-components'
+//import './cardinal.css';
 import { Helmet } from 'react-helmet';
 
 import { useSnackbar } from 'notistack';
@@ -160,7 +160,6 @@ function DashboardContent() {
       <SnackbarProvider>
         <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets} autoConnect>
-              <WalletIdentityProvider>
                 <Grid 
                   //color={grapeTheme.palette.primary.light}
                   sx={{ 
@@ -210,7 +209,6 @@ function DashboardContent() {
                     </SessionProvider>
                   </HashRouter>
                 </Grid>
-              </WalletIdentityProvider>
             </WalletProvider>
           </ConnectionProvider>
         </SnackbarProvider>

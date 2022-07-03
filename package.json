@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "@bonfida/spl-name-service": "^0.1.31",
-    "@cardinal/namespaces-components": "^3.3.1",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "@jup-ag/core": "^1.0.0-beta.26",
