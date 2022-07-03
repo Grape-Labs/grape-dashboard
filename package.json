@@ -1,6 +1,6 @@
 {
   "name": "grape-dashboard",
-  "version": "1.2.225",
+  "version": "1.2.226",
   "author": "Grape devDAO",
   "private": true,
   "repository": "https://github.com/grape-labs/grape-dashboard",
@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@bonfida/spl-name-service": "^0.1.31",
+    "@cardinal/namespaces-components": "^3.3.1",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
     "@jup-ag/core": "^1.0.0-beta.26",
@@ -56,6 +57,7 @@
     "@react-native-async-storage/async-storage": "^1.15.17",
     "@react-three/drei": "^7.14.2",
     "@react-three/fiber": "^7.0.15",
+    "@saberhq/solana-contrib": "^1.13.31",
     "@self.id/web": "^0.3.0",
     "@solana/pay": "^0.2.0",
     "@solana/spl-governance": "^0.0.34",

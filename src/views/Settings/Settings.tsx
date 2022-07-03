@@ -28,7 +28,8 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { makeStyles, styled, alpha } from '@mui/material/styles';
 
 import { useWallet } from '@solana/wallet-adapter-react';
-import { TwitterSettings } from "./TwitterSettings";
+//import { TwitterSettings } from "./TwitterSettingsCardinal";
+import { TwitterSettings } from "./TwitterSettingsBonfida";
 import { useSession } from "../../contexts/session";
 import User from '../../models/User';
 import DiscordIcon from '../../components/StaticIcons/DiscordIcon';

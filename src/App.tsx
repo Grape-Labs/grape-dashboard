@@ -30,6 +30,8 @@ import Header from './components/Header/Header';
 import { SnackbarProvider } from 'notistack';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { WalletIdentityProvider } from '@cardinal/namespaces-components'
+import './cardinal.css';
 import { Helmet } from 'react-helmet';
 
 import { useSnackbar } from 'notistack';
@@ -158,57 +160,57 @@ function DashboardContent() {
       <SnackbarProvider>
         <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets} autoConnect>
-              
-              <Grid 
-                //color={grapeTheme.palette.primary.light}
-                sx={{ 
-                  flex: 1
-                }}>
-                <CssBaseline />
-                <HashRouter>
-                  <SessionProvider>
-                    <AppBar position="fixed" color="primary" style={{ background: 'rgba(0,0,0,0.5)' }}>
-                        <Header
-                            open={open} 
-                            toggleDrawer={toggleDrawer}
-                        />
+              <WalletIdentityProvider>
+                <Grid 
+                  //color={grapeTheme.palette.primary.light}
+                  sx={{ 
+                    flex: 1
+                  }}>
+                  <CssBaseline />
+                  <HashRouter>
+                    <SessionProvider>
+                      <AppBar position="fixed" color="primary" style={{ background: 'rgba(0,0,0,0.5)' }}>
+                          <Header
+                              open={open} 
+                              toggleDrawer={toggleDrawer}
+                          />
 
-                      </AppBar>
-                      
-                      <Grid
-                        component="main"
-                        sx={{
-                          mt: 6,
-                          display: 'flex',
-                          flexGrow: 1
-                        }}
-                      >
-                        <Container maxWidth="lg" sx={{ mt: 4, mb: 4}}>
-                          <ConfirmDialog />
-                          <Routes>
-                            <Route path="/" element={<HomeView/>} />
-                            <Route index element={<HomeView/>} />
-                            <Route path="dashboard" element={<HomeView/>} />
-                            <Route path="contribute" element={<ContributeView />} />
-                            <Route path="streams" element={<MeanfiView />} />
-                            <Route path="servers" element={<ServersView />} />
-                            <Route path="settings" element={<SettingsView />} />
-                            <Route path="partners" element={<GrapePartnersView />} />
-                            <Route path="confirmation" element={<ConfirmationView />} />
-                            <Route path="register" element={<RegisterView />} />
-                            <Route path="membership" element={<MembershipView />} />
-                            <Route path="news" element={<NewsView />} />
-                            <Route path="payments" element={<PaymentsView />} />
-                            <Route path="*" element={<NotFound/>} />
-                          </Routes>
-                          
-                          <Copyright sx={{ mt: 4 }} />
-                        </Container>
-                      </Grid>
-                  </SessionProvider>
-                </HashRouter>
-              </Grid>
-              
+                        </AppBar>
+                        
+                        <Grid
+                          component="main"
+                          sx={{
+                            mt: 6,
+                            display: 'flex',
+                            flexGrow: 1
+                          }}
+                        >
+                          <Container maxWidth="lg" sx={{ mt: 4, mb: 4}}>
+                            <ConfirmDialog />
+                            <Routes>
+                              <Route path="/" element={<HomeView/>} />
+                              <Route index element={<HomeView/>} />
+                              <Route path="dashboard" element={<HomeView/>} />
+                              <Route path="contribute" element={<ContributeView />} />
+                              <Route path="streams" element={<MeanfiView />} />
+                              <Route path="servers" element={<ServersView />} />
+                              <Route path="settings" element={<SettingsView />} />
+                              <Route path="partners" element={<GrapePartnersView />} />
+                              <Route path="confirmation" element={<ConfirmationView />} />
+                              <Route path="register" element={<RegisterView />} />
+                              <Route path="membership" element={<MembershipView />} />
+                              <Route path="news" element={<NewsView />} />
+                              <Route path="payments" element={<PaymentsView />} />
+                              <Route path="*" element={<NotFound/>} />
+                            </Routes>
+                            
+                            <Copyright sx={{ mt: 4 }} />
+                          </Container>
+                        </Grid>
+                    </SessionProvider>
+                  </HashRouter>
+                </Grid>
+              </WalletIdentityProvider>
             </WalletProvider>
           </ConnectionProvider>
         </SnackbarProvider>
