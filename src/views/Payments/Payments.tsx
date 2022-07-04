@@ -6,7 +6,7 @@ import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstructi
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { GRAPE_RPC_ENDPOINT, TX_RPC_ENDPOINT } from '../../components/Tools/constants';
 import { getTokenOwnerRecordForRealm } from '@solana/spl-governance';
-import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token";
+import { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token-v2";
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { WalletError, WalletNotConnectedError } from '@solana/wallet-adapter-base';
 import { ValidateAddress } from '../../components/Tools/WalletAddress';

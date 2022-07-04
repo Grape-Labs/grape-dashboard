@@ -354,31 +354,6 @@ export function TwitterBoardingDialog(props:any){
                   environment={'mainnet-beta'}
                   dark={true}
                   handleDisconnect={() => wallet.adapter.disconnect()}
-                  wallet={solanaProvider as Wallet}
-                />
-                }
-                {/* Replace address with image */}
-                <AddressImage address={publicKey} connection={connection} />
-                {/* Replace address with name */}
-                <DisplayAddress address={publicKey} connection={connection} />
-                {/* Profile from address */}
-                <ProfileSmall address={publicKey} connection={connection} />
-                {/* Button to connect twitter profile */}
-                
-                <ConnectTwitterButton 
-                  connection={connection} 
-                  cluster={'mainnet-beta'}
-                  wallet={solanaProvider as Wallet} />
-              </>
-
-              <>
-                {/* Account linking and wallet connector */}
-                {
-                <AccountConnect
-                  connection={connection}
-                  environment={'mainnet-beta'}
-                  dark={true}
-                  handleDisconnect={() => wallet.adapter.disconnect()}
                   wallet={wallet.adapter as Wallet}
                 />
                 }
@@ -396,38 +371,7 @@ export function TwitterBoardingDialog(props:any){
                   wallet={wallet.adapter as Wallet} />
               </>
 
-                Using Typesafe WA
-              <>
-                {
-                  <AccountConnect
-                    connection={connection}
-                    environment={'mainnet-beta'}
-                    dark={true}
-                    handleDisconnect={() => wallet.adapter.disconnect()}
-                    wallet={{
-                      signAllTransactions: async (txs: Transaction[]) => solanaProvider.signAllTransactions(txs),
-                      signTransaction: async (tx: Transaction) => tx,
-                      publicKey: solanaProvider.publicKey}} 
-                  />
-                  }
-                  {/* Replace address with image */}
-                  <AddressImage address={publicKey} connection={connection} />
-                  {/* Replace address with name */}
-                  <DisplayAddress address={publicKey} connection={connection} />
-                  {/* Profile from address */}
-                  <ProfileSmall address={publicKey} connection={connection} />
-                  {/* Button to connect twitter profile */}
-                  
-                  <ConnectTwitterButton 
-                    connection={connection} 
-                    cluster={'mainnet-beta'}
-                    wallet={{
-                      signAllTransactions: async (txs: Transaction[]) => solanaProvider.signAllTransactions(txs),
-                      signTransaction: async (tx: Transaction) => tx,
-                      publicKey: solanaProvider.publicKey}} />
-              </>
-
-
+              
               </Box>
           </DialogContent>
       </BootstrapDialog>   
