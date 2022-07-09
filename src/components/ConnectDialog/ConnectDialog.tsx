@@ -22,6 +22,7 @@ import {
   CircularProgress
 } from '@mui/material';
 
+const {prove} = require('@identity.com/prove-solana-wallet');
 import { useSnackbar } from 'notistack';
 import CloseIcon from '@mui/icons-material/Close';
 import DisconnectIcon from '@mui/icons-material/LinkOff';
@@ -114,6 +115,48 @@ const WalletNavigation: FC = (props:any) => {
     setSession(NakedWallet(cnsPublicKey, session));
   }
   
+  async function confirmWalletWithSignTransaction() { 
+    const amountToSend = 0;
+    const decimals = 9;
+    const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
+    
+    try{
+      const transaction = new Transaction()
+      .add(
+          SystemProgram.transfer({
+              fromPubkey: publicKey,
+              toPubkey: publicKey,
+              lamports: adjustedAmountToSend,
+          })
+      );
+      transaction.feePayer = publicKey
+      
+      let blockhash = (await connection.getLatestBlockhash('finalized')).blockhash;
+      transaction.recentBlockhash = blockhash;
+
+      const sm_signature = await signTransaction(transaction);
+    
+      console.log('sm_signature: '+JSON.stringify(sm_signature));
+      
+      if (!sm_signature){
+        console.log("Signature Verification = false");
+        return null;
+        //disconnectSession(true);
+      }
+      
+      enqueueSnackbar(`Signing Transaction complete`,{ variant: 'success' });
+      
+      return sm_signature;
+
+    }catch(e:any){
+      closeSnackbar();
+      enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
+      //disconnectSession(true);
+      return null;
+    }
+  }
+
+
   async function confirmWalletWithTransaction() { 
     const amountToSend = 0.00001;
     const decimals = 9;
@@ -237,8 +280,11 @@ const WalletNavigation: FC = (props:any) => {
           });
 
           if (!sm_signature){
-            sm_signature = (transaction:Transaction) => signTransaction(transaction);
-            console.log('signing transaction route... '+JSON.stringify(sm_signature));
+            if (window.confirm("Grape signs a message to verify your wallet\n\nYour current wallet could not be verified, some wallets including Ledger do not support message signing, but can sign a transaction for verification, if you would like to sign a transaction to your wallet to confirm your wallet please press OK")){
+              fromTransaction = true;
+              sm_signature = await confirmWalletWithSignTransaction();
+              sm_signature = new TextEncoder().encode(sm_signature); // convert to "utf-8"
+            }
           }
 
           if (!sm_signature){
