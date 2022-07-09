@@ -116,7 +116,7 @@ const WalletNavigation: FC = (props:any) => {
   }
   
   async function confirmWalletWithSignTransaction() { 
-    const amountToSend = 0;
+    const amountToSend = 0.00001;
     const decimals = 9;
     const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
     
@@ -134,8 +134,10 @@ const WalletNavigation: FC = (props:any) => {
       let blockhash = (await connection.getLatestBlockhash('finalized')).blockhash;
       transaction.recentBlockhash = blockhash;
 
+      console.log("transaction: "+JSON.stringify(transaction));
+
       const sm_signature = await signTransaction(transaction);
-    
+      
       console.log('sm_signature: '+JSON.stringify(sm_signature));
       
       if (!sm_signature){
@@ -155,7 +157,6 @@ const WalletNavigation: FC = (props:any) => {
       return null;
     }
   }
-
 
   async function confirmWalletWithTransaction() { 
     const amountToSend = 0.00001;
@@ -268,6 +269,7 @@ const WalletNavigation: FC = (props:any) => {
           console.log(wallet?.adapter.name + " attempting to sign message");
 
           let fromTransaction = false;
+          let fromSignTransaction = false;
           let sm_signature = await signMessage(smessage)
           .catch((error: any)=>{
             
@@ -279,14 +281,15 @@ const WalletNavigation: FC = (props:any) => {
 
           });
 
+          /*
           if (!sm_signature){
             if (window.confirm("Grape signs a message to verify your wallet\n\nYour current wallet could not be verified, some wallets including Ledger do not support message signing, but can sign a transaction for verification, if you would like to sign a transaction to your wallet to confirm your wallet please press OK")){
               fromTransaction = true;
               sm_signature = await confirmWalletWithSignTransaction();
               sm_signature = new TextEncoder().encode(sm_signature); // convert to "utf-8"
             }
-          }
-
+          }*/
+          
           if (!sm_signature){
             if (window.confirm("Grape signs a message to verify your wallet\n\nYour current wallet could not be verified, some wallets including Ledger do not support message signing, if you would like to send a transaction to your wallet to confirm your wallet please press OK")){
               fromTransaction = true;
@@ -312,7 +315,7 @@ const WalletNavigation: FC = (props:any) => {
 
           // Verify that the bytes were signed using the private key that matches the known public key
           if (wallet?.adapter.name != "Slope"){
-            if (!fromTransaction){ // verify signature from signed message
+            if ((!fromTransaction)){ // verify signature from signed message
               if (!sign.detached.verify(smessage, sm_signature, publicKey.toBytes())){ 
                 disconnectSession(false);
                 throw new Error('CD: Invalid signature!');
@@ -340,7 +343,8 @@ const WalletNavigation: FC = (props:any) => {
               address: bs58_address,
               publicKey: publicKey.toString(),
               signature: signature,
-              fromTransaction: fromTransaction
+              fromTransaction: fromTransaction,
+              fromSignTransaction: fromSignTransaction
           }));
 
           console.log(wallet?.adapter.name + " connecting to Grape Dashboard...");
@@ -358,7 +362,8 @@ const WalletNavigation: FC = (props:any) => {
                     address: bs58_address,
                     publicKey: publicKey.toString(),
                     signature: signature,
-                    fromTransaction: fromTransaction
+                    fromTransaction: fromTransaction,
+                    //fromSignTransaction: fromSignTransaction
                 })
               }).catch( err => {
                 console.log("ERROR: "+err);
@@ -371,6 +376,7 @@ const WalletNavigation: FC = (props:any) => {
               session.publicKey = publicKey.toString();
               session.isConnected = true;
               session.fromTransaction = fromTransaction;
+              //session.fromSignTransaction = fromSignTransaction;
               if (!response)
                 session.isWallet = false;
               else
@@ -387,7 +393,8 @@ const WalletNavigation: FC = (props:any) => {
                 address: bs58_address,
                 publicKey: publicKey.toString(),
                 signature: signature,
-                fromTransaction: fromTransaction
+                fromTransaction: fromTransaction,
+                fromSignTransaction: fromSignTransaction
             }));
             
             if (GRAPE_APP_API_URL){
@@ -402,7 +409,8 @@ const WalletNavigation: FC = (props:any) => {
                     address: bs58_address,
                     publicKey: publicKey.toString(),
                     signature: signature,
-                    fromTransaction: fromTransaction
+                    fromTransaction: fromTransaction,
+                    //fromSignTransaction: fromSignTransaction,
                 })
               }).catch( err => {
                 console.log("ERROR: "+err);
@@ -414,6 +422,7 @@ const WalletNavigation: FC = (props:any) => {
               session2.publicKey = publicKey.toString();
               session2.discordId = discordId;
               session.fromTransaction = fromTransaction;
+              //session.fromSignTransaction = fromSignTransaction;
               if (!response2){
                 session2.isConnected = false;
                 session.isWallet = false;

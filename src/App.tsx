@@ -117,10 +117,10 @@ function DashboardContent() {
   const endpoint = GRAPE_RPC_ENDPOINT; //useMemo(() => clusterApiUrl(network), [network]);
 
   const wallets = useMemo(() => [
+    new SolflareWalletAdapter(),
     new GlowWalletAdapter(),
     new PhantomWalletAdapter(),
     new SlopeWalletAdapter(),
-    new SolflareWalletAdapter(),
     new ExodusWalletAdapter(),
     new TorusWalletAdapter(),
     //new LedgerWalletAdapter(),

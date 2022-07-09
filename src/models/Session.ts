@@ -17,6 +17,7 @@ export default class Session {
   isWallet: Boolean;
   isConnected: Boolean;
   fromTransaction: Boolean;
+  fromSignTransaction: Boolean;
 
   constructor(data: any) {
     this.userId = data && data.userId;
@@ -30,5 +31,6 @@ export default class Session {
     this.publicKey = data && data.publicKey;
     this.isWallet = data && data.isWallet;
     this.fromTransaction = data && data.fromTransaction;
+    this.fromSignTransaction = data && data.fromSignTransaction;
   }
 }
