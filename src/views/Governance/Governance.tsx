@@ -167,28 +167,45 @@ function RealmProposals(props:any) {
                 const programId = new PublicKey(GOVERNANCE_PROGRAM_ID);
                 const gprops = await getAllProposals(new Connection(GOVERNANCE_RPC_ENDPOINT), programId, realm);
                 
+                //console.log("realm: "+JSON.stringify(realm));
+
                 // Arrange
                 const gvotes = await getVoteRecordsByVoter(connection, programId, publicKey);
+                //console.log("votes: "+JSON.stringify(gvotes));
                 setVoteRecords(gvotes);
-            
+                
                 let allprops: any[] = [];
                 for (let props of gprops){
                     for (let prop of props){
                         var jprs = JSON.parse(JSON.stringify(prop));
                         if (prop){
-                            if (jprs.account?.votingAt){
-                                //try{
-                                //    let position = gvotes.filter(value => {return value.account.proposal.toBase58() === prop.pubkey.toBase58()});
-                                //    allprops.push(prop, position);
-                                //}catch(e){allprops.push(prop)}
-                                allprops.push(prop)
-                                //console.log("Pushing: "+JSON.stringify(prop));
+                            
+                            let position = null;
+                            for (let vote of gvotes){
+                                if (vote.account.proposal.toBase58() === prop.pubkey.toBase58()){
+                                    console.log("FOUND ")
+                                    console.log("You voted : "+JSON.stringify(vote.account?.voteWeight));
+                                    position = vote.account?.voteWeight;
+                                }
                             }
+                            /*
+                            if (jprs.account?.votingAt){
+                                try{
+                                    let position = gvotes.filter(value => {return value.account.proposal.toBase58() === prop.pubkey.toBase58()});
+                                    allprops.push(prop, position);
+                                }catch(e){allprops.push(prop)}
+                                //allprops.push(prop);
+                                //console.log("Pushing: "+JSON.stringify(prop));
+                            }*/
+                            //allprops.push(prop, position);
+                            allprops.push(prop);
                         }
                     }
                 }
                 // sort by date! 
+                
                 allprops.sort((a,b) => (a.account?.votingAt.toNumber() < b.account?.votingAt.toNumber()) ? 1 : -1);
+                console.log("allprops "+JSON.stringify(allprops));
                 // then set props
                 setProposals(allprops);
                 

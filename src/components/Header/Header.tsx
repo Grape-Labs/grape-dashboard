@@ -195,8 +195,9 @@ export function Header(props: any) {
                 
                 <Tooltip title={`Collection`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grape.art' target="_blank"><PhotoOutlinedIcon/></IconButton></Tooltip>
                 <Tooltip title={`Grape Drive`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grapedrive.vercel.app' target="_blank"><StorageIcon/></IconButton></Tooltip>
+                {/*
                 <Tooltip title={`Staking`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grapestaking.vercel.app' target="_blank"><BrowseGalleryIcon/></IconButton></Tooltip>
-                    
+                */} 
                 <Hidden smDown>
                     <Tooltip title={`Streams`}><IconButton sx={{borderRadius:'17px'}} component={NavLink} color="inherit" to="/streams"><DownloadingIcon /></IconButton></Tooltip>
                     <Tooltip title={`About`}><IconButton sx={{borderRadius:'17px'}} component="a" href='https://grapes.network' target="_blank"><InfoOutlinedIcon/></IconButton></Tooltip>

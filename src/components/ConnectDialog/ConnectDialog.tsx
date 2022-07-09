@@ -91,7 +91,7 @@ const WalletNavigation: FC = (props:any) => {
   const { session, setSession } = useSession();
   const { connection } = useConnection();
   const { publicKey, wallet, disconnect, sendTransaction, signMessage } = useWallet();
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const message  = '$GRAPE';
   //session: Object;
   
@@ -118,33 +118,56 @@ const WalletNavigation: FC = (props:any) => {
     const amountToSend = 0.00001;
     const decimals = 9;
     const adjustedAmountToSend = amountToSend * Math.pow(10, decimals);
-    const transaction = new Transaction()
-    .add(
-        SystemProgram.transfer({
-            fromPubkey: publicKey,
-            toPubkey: publicKey,
-            lamports: adjustedAmountToSend,
-        })
-    );
-    
-    //enqueueSnackbar(`Preparing to send ${amountToSend} ${name} to ${toaddress}`,{ variant: 'info' });
-    console.log("Preparing transaction to self: " + amountToSend);
-    enqueueSnackbar(`Preparing transaction`,{ variant: 'info' });
-    const sm_signature = await sendTransaction(transaction, connection);
-    //enqueueSnackbar(`Transaction ready`,{ variant: 'info' });
-    enqueueSnackbar(`Please wait while the transaction completes, this may take a few seconds`,{ variant: 'info', autoHideDuration: 5000 });
-    console.log("Confirming Transaction: " + JSON.stringify(sm_signature));
-    sleep(5000);
-    //enqueueSnackbar(`Confirming transaction`,{ variant: 'info' });
-    await connection.confirmTransaction(sm_signature, 'processed');
-    //if (!transaction.verifySignatures()){
-    if (!sm_signature){
-      console.log("Signature Verification = false");
+    try{
+      const transaction = new Transaction()
+      .add(
+          SystemProgram.transfer({
+              fromPubkey: publicKey,
+              toPubkey: publicKey,
+              lamports: adjustedAmountToSend,
+          })
+      );
+      
+      //enqueueSnackbar(`Preparing to send ${amountToSend} ${name} to ${toaddress}`,{ variant: 'info' });
+      console.log("Preparing transaction to self: " + amountToSend);
+      enqueueSnackbar(`Preparing transaction`,{ variant: 'info' });
+      const sm_signature = await sendTransaction(transaction, connection);
+
+      const snackprogress = (key:any) => (
+        <CircularProgress sx={{padding:'10px'}} />
+      );
+      const cnfrmkey = enqueueSnackbar(`Confirming transaction`,{ variant: 'info', action:snackprogress, persist: true });
+      const latestBlockHash = await connection.getLatestBlockhash();
+      await connection.confirmTransaction({
+          blockhash: latestBlockHash.blockhash,
+          lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+          signature: sm_signature}, 
+          'processed'
+      );
+
+      closeSnackbar(cnfrmkey);
+      //enqueueSnackbar(`Transaction ready`,{ variant: 'info' });
+      //enqueueSnackbar(`Please wait while the transaction completes, this may take a few seconds`,{ variant: 'info', autoHideDuration: 5000 });
+      //console.log("Confirming Transaction: " + JSON.stringify(sm_signature));
+      //sleep(5000);
+      //enqueueSnackbar(`Confirming transaction`,{ variant: 'info' });
+      //await connection.confirmTransaction(sm_signature, 'processed');
+      //if (!transaction.verifySignatures()){
+      
+      if (!sm_signature){
+        console.log("Signature Verification = false");
+        disconnectSession(true);
+      }
+      
+      enqueueSnackbar(`Transaction complete`,{ variant: 'success' });
+      
+      return sm_signature;
+    }catch(e:any){
+      closeSnackbar();
+      enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
       disconnectSession(true);
+      return null;
     }
-    enqueueSnackbar(`Transaction complete`,{ variant: 'success' });
-    
-    return sm_signature;
   }
 
   //if (!publicKey) throw new WalletNotConnectedError();

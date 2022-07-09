@@ -91,7 +91,7 @@ export function PaymentsView(props: any) {
             enqueueSnackbar(`Sent payments - ${signature}`,{ variant: 'success' });
             
             setTransactionSignature(signature);
-        }catch(e){
+        }catch(e:any){
             closeSnackbar();
             enqueueSnackbar(e.message ? `${e.name}: ${e.message}` : e.name, { variant: 'error' });
         } 
