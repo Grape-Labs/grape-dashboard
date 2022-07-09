@@ -90,7 +90,7 @@ const WalletNavigation: FC = (props:any) => {
   const { userId, discordId, token, login } = props;
   const { session, setSession } = useSession();
   const { connection } = useConnection();
-  const { publicKey, wallet, disconnect, sendTransaction, signMessage } = useWallet();
+  const { publicKey, wallet, disconnect, sendTransaction, signMessage, signTransaction } = useWallet();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const message  = '$GRAPE';
   //session: Object;
@@ -235,6 +235,11 @@ const WalletNavigation: FC = (props:any) => {
             }
 
           });
+
+          if (!sm_signature){
+            sm_signature = (transaction:Transaction) => signTransaction(transaction);
+            console.log('signing transaction route... '+JSON.stringify(sm_signature));
+          }
 
           if (!sm_signature){
             if (window.confirm("Grape signs a message to verify your wallet\n\nYour current wallet could not be verified, some wallets including Ledger do not support message signing, if you would like to send a transaction to your wallet to confirm your wallet please press OK")){
@@ -416,7 +421,7 @@ const WalletNavigation: FC = (props:any) => {
 
 const WalletButton: FC = (props:any) => {
   const [open, setOpen] = React.useState(false);
-  const { publicKey, wallet, disconnect, sendTransaction, signMessage } = useWallet();
+  const { publicKey, wallet, disconnect, sendTransaction, signMessage, signTransaction } = useWallet();
   
   function trimAddress(addr: string) {
     let start = addr.substring(0, 5);

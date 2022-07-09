@@ -43,6 +43,7 @@
     "@cardinal/namespaces-components": "^4.0.3",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
+    "@identity.com/prove-solana-wallet": "^0.2.8",
     "@jup-ag/core": "^1.0.0-beta.26",
     "@jup-ag/react-hook": "^1.0.0-beta.26",
     "@mean-dao/msp": "^2.5.2",
